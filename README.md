@@ -1,0 +1,2 @@
+# argocd
+apply-argocd
