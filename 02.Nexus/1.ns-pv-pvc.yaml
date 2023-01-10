@@ -1,0 +1,39 @@
+# make k8s-node1 PV 
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nexus-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:
+    path: /k8s-data/nexus
+
+---
+
+# # create Namespace »ý¼º
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: nexus-ns
+# ---
+
+# make PVC
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nexus-pvc
+  namespace: nexus-ns
+spec:
+  storageClassName: local-storage
+  volumeName: nexus-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
