@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-proxy-deployment
+  namespace: nginx-ns
+  labels:
+    app: nginx-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-proxy
+  template:
+    metadata:
+      labels:
+        app: nginx-proxy
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.23.2
+        ports:
+          - containerPort: 8090
+          - containerPort: 8091
+          - containerPort: 8092
+          - containerPort: 9001
+        volumeMounts:
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+      # nodeName: worker-1
+      # nodeSelector:
+      #   key: worker-1      
+      volumes:
+      - name: nginx-conf
+        configMap:
+          name: nginx-conf
+          items:
+            - key: default.conf
+              path: default.conf
+---
+
+# SERVICE
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-proxy-svc
+  namespace: nginx-ns
+spec:
+  selector:
+    app: nginx-proxy
+  ports:
+  - name: nate
+    port: 8090
+    protocol: TCP
+    targetPort: 8090
+    nodePort: 31070
+  - name: naver
+    port: 8091
+    protocol: TCP
+    targetPort: 8091
+    nodePort: 31071
+  - name: daum
+    port: 8092
+    protocol: TCP
+    targetPort: 8092
+    nodePort: 31072
+  - name: maven
+    port: 9001
+    protocol: TCP
+    targetPort: 9001
+    nodePort: 31091
+  - name: plugin-gradle
+    port: 9002
+    protocol: TCP
+    targetPort: 9002
+    nodePort: 31092
+  - name: gradle
+    port: 9003
+    protocol: TCP
+    targetPort: 9003
+    nodePort: 31093
+  - name: npmjs
+    port: 9004
+    protocol: TCP
+    targetPort: 9004
+    nodePort: 31094
+  - name: vmware
+    port: 9005
+    protocol: TCP
+    targetPort: 9005
+    nodePort: 31095
+  - name: docker
+    port: 9006
+    protocol: TCP
+    targetPort: 9006
+    nodePort: 31096
+  - name: quay
+    port: 9007
+    protocol: TCP
+    targetPort: 9007
+    nodePort: 31097
+  - name: k8s
+    port: 9008
+    protocol: TCP
+    targetPort: 9008
+    nodePort: 31098
+  type: NodePort
+---

@@ -1,0 +1,112 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: nginx-ns
+data:
+  default.conf: |
+    server {
+      listen 8090;
+      server_name  nate.com;
+
+      location / {
+        # root   /usr/share/nginx/html;
+        # index  index.html index.htm;
+        proxy_pass https://www.nate.com;
+      }
+
+      location /naver {
+        # root   /usr/share/nginx/html;
+        # index  index.html index.htm;
+        proxy_pass https://www.naver.com;
+      }
+
+      location /daum {
+        # root   /usr/share/nginx/html;
+        # index  index.html index.htm;
+        proxy_pass https://www.daum.net;
+      }
+    }
+
+    server {
+      listen 8091;
+      server_name  naver.com;
+    
+      location / {
+        proxy_pass https://www.naver.com;
+      }
+    }
+
+    server {
+      listen 8092;
+      server_name  daum.net;
+    
+      location / {
+        proxy_pass https://daum.net;
+      }
+    }
+
+    server {
+      listen 9001;
+      server_name  repo1.maven.org;
+    
+      location / {
+        proxy_pass https://repo1.maven.org/maven2/;
+      }
+    }
+    server {
+      listen 9002;
+      server_name  plugins.gradle.org;
+    
+      location / {
+        proxy_pass https://plugins.gradle.org/m2/;
+      }
+    }
+    server {
+      listen 9003;
+      server_name  services.gradle.org;
+    
+      location / {
+        proxy_pass https://services.gradle.org;
+      }
+    }
+    server {
+      listen 9004;
+      server_name  registry.npmjs.org;
+    
+      location / {
+        proxy_pass https://registry.npmjs.org;
+      }
+    }
+    server {
+      listen 9005;
+      server_name  projects.registry.vmware.com;
+    
+      location / {
+        proxy_pass https://projects.registry.vmware.com/tkg;
+      }
+    }
+    server {
+      listen 9006;
+      server_name  docker.io;
+    
+      location / {
+        proxy_pass https://docker.io;
+      }
+    }
+    server {
+      listen 9007;
+      server_name  quay.io;
+    
+      location / {
+        proxy_pass https://quay.io;
+      }
+    }
+    server {
+      listen 9008;
+      server_name  k8s.gcr.io;
+    
+      location / {
+        proxy_pass https://k8s.gcr.io;
+      }
+    }
