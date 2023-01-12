@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jenkins
+  namespace: jenkins-ns
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      securityContext:
+        runAsUser: 0
+        fsGroup: 0
+      containers:
+      - name: jenkins
+        image: jenkins/jenkins:2.361.1-lts-jdk11
+        env: 
+        - name: JAVA_OPTS
+          value: -Djenkins.install.runSetupWizard=true
+        ports:
+          - name: http-port
+            containerPort: 8080
+          - name: jnlp-port
+            containerPort: 50000
+        volumeMounts:
+        - name: jenkins-volume
+          mountPath: /var/jenkins_home
+        # - name: dockersock
+        #   mountPath: /var/run/docker.sock
+        # - name: docker
+        #   mountPath: /usr/bin/docker
+      volumes:
+      - name: jenkins-volume
+        persistentVolumeClaim: 
+          claimName: jenkins-pvc
+      # - name: dockersock
+      #   hostPath:
+      #      path: /var/run/docker.sock
+      # - name: docker
+      #   hostPath:
+      #     path: /usr/bin/docker 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-svc
+  namespace: jenkins-ns
+spec:
+  selector:
+    app: jenkins
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+    nodePort: 32010    #NodePort
+  - name: agent
+    port: 50000
+    targetPort: 50000
+    protocol: TCP
+    nodePort: 32011
+  # type: ClusterIP
+  # type: NodePort
+  type: LoadBalancer

@@ -1,0 +1,41 @@
+# create PersistentVolume
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: jenkins-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: local-storage
+  hostPath:         #hostpath
+    path: /k8s-data/jenkins
+
+---
+
+# create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: jenkins-ns
+---
+
+# create PersistentVolumeClaim
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jenkins-pvc
+  namespace: jenkins-ns
+spec:
+  storageClassName: local-storage
+  volumeName: jenkins-pv 
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+---
+
+
